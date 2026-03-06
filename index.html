@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#2d5016">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Kozel – Zapisovač bodů</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- OBRAZOVKA 1: Výběr hráčů -->
+  <div id="screen-setup" class="screen active">
+    <header>
+      <h1>🐐 Kozel</h1>
+      <p class="subtitle">Zapisovač bodů</p>
+    </header>
+
+    <div class="card">
+      <label class="label">Počet hráčů</label>
+      <div class="player-count-btns" id="player-count-btns">
+        <button class="count-btn" data-count="3">3</button>
+        <button class="count-btn active" data-count="4">4</button>
+        <button class="count-btn" data-count="5">5</button>
+        <button class="count-btn" data-count="6">6</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <label class="label">Jména hráčů</label>
+      <div id="player-names"></div>
+    </div>
+
+    <div class="card lineup-card">
+      <label class="label">Sestavy</label>
+      <div class="lineup-actions">
+        <button id="btn-save-lineup" class="btn btn-secondary btn-sm">Uložit sestavu</button>
+        <button id="btn-load-lineup" class="btn btn-secondary btn-sm">Načíst sestavu</button>
+      </div>
+      <div id="lineup-list" class="lineup-list hidden"></div>
+    </div>
+
+    <button id="btn-start-game" class="btn btn-primary btn-lg">Zahájit hru</button>
+  </div>
+
+  <!-- OBRAZOVKA 2: Přehled skóre -->
+  <div id="screen-score" class="screen">
+    <header>
+      <h1>🐐 Kozel</h1>
+      <span class="round-badge" id="round-badge">Kolo 1</span>
+    </header>
+
+    <div class="card">
+      <table class="score-table" id="score-table">
+        <thead>
+          <tr>
+            <th>Hráč</th>
+            <th>Skóre</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="action-buttons">
+      <button id="btn-next-round" class="btn btn-primary btn-lg">Další kolo</button>
+      <button id="btn-undo-round" class="btn btn-secondary btn-sm" disabled>Opravit poslední kolo</button>
+    </div>
+
+    <div class="card history-card">
+      <button id="btn-toggle-history" class="btn btn-link">Historie kol ▼</button>
+      <div id="history-container" class="hidden">
+        <div id="history-list"></div>
+      </div>
+    </div>
+
+    <button id="btn-new-game" class="btn btn-danger btn-sm">Nová hra</button>
+
+    <!-- Game Over overlay -->
+    <div id="game-over" class="game-over hidden">
+      <div class="game-over-content">
+        <h2>Konec hry!</h2>
+        <p id="game-over-msg"></p>
+        <div id="game-over-scores"></div>
+        <button id="btn-new-game-over" class="btn btn-primary btn-lg">Nová hra</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OBRAZOVKA 3: Zadání výsledků kola -->
+  <div id="screen-round" class="screen">
+    <header>
+      <h1>Zadání kola</h1>
+      <span class="remaining-badge" id="remaining-badge">Zbývá: 20</span>
+    </header>
+
+    <div class="card">
+      <label class="toggle-label">
+        <span>Hlášené kolo (40 bodů)</span>
+        <label class="switch">
+          <input type="checkbox" id="toggle-hlasene">
+          <span class="slider"></span>
+        </label>
+      </label>
+    </div>
+
+    <div id="round-players"></div>
+
+    <div class="action-buttons">
+      <button id="btn-confirm-round" class="btn btn-primary btn-lg" disabled>Potvrdit kolo</button>
+      <button id="btn-cancel-round" class="btn btn-secondary btn-sm">Zrušit</button>
+    </div>
+  </div>
+
+  <!-- Modal pro načtení sestavy -->
+  <div id="modal-lineup" class="modal hidden">
+    <div class="modal-content">
+      <h3>Uložené sestavy</h3>
+      <div id="modal-lineup-list"></div>
+      <button id="btn-close-lineup-modal" class="btn btn-secondary btn-sm">Zavřít</button>
+    </div>
+  </div>
+
+  <!-- Modal pro uložení sestavy -->
+  <div id="modal-save-lineup" class="modal hidden">
+    <div class="modal-content">
+      <h3>Uložit sestavu</h3>
+      <input type="text" id="lineup-name-input" placeholder="Název sestavy" class="input">
+      <div class="modal-actions">
+        <button id="btn-confirm-save-lineup" class="btn btn-primary btn-sm">Uložit</button>
+        <button id="btn-cancel-save-lineup" class="btn btn-secondary btn-sm">Zrušit</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
