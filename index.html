@@ -45,6 +45,14 @@
     </div>
 
     <button id="btn-start-game" class="btn btn-primary btn-lg">Zahájit hru</button>
+
+    <div class="card">
+      <button id="btn-show-archive" class="btn btn-link">Historie her ▼</button>
+      <div id="archive-container" class="hidden">
+        <div id="archive-list"></div>
+        <button id="btn-clear-archive" class="btn btn-danger btn-sm" style="margin-top:8px">Smazat historii</button>
+      </div>
+    </div>
   </div>
 
   <!-- OBRAZOVKA 2: Přehled skóre -->
@@ -86,7 +94,10 @@
         <h2>Konec hry!</h2>
         <p id="game-over-msg"></p>
         <div id="game-over-scores"></div>
-        <button id="btn-new-game-over" class="btn btn-primary btn-lg">Nová hra</button>
+        <div class="game-over-buttons">
+          <button id="btn-close-game-over" class="btn btn-secondary btn-sm">Zobrazit průběh</button>
+          <button id="btn-new-game-over" class="btn btn-primary btn-lg">Nová hra</button>
+        </div>
       </div>
     </div>
   </div>

@@ -190,6 +190,7 @@
     $('round-badge').textContent = `Kolo ${roundNumber + 1}`;
     $('btn-undo-round').disabled = history.length === 0;
     $('btn-next-round').style.display = gameOver ? 'none' : '';
+    $('btn-next-round').textContent = roundNumber === 0 ? 'Zadat první kolo' : 'Další kolo';
     $('game-over').classList.add('hidden');
 
     if (gameOver) {
@@ -251,6 +252,9 @@
     `).join('');
 
     overlay.classList.remove('hidden');
+
+    // Save finished game to archive
+    saveGameToArchive();
   }
 
   // --- Score screen events ---
@@ -265,11 +269,21 @@
     $('btn-new-game').addEventListener('click', () => {
       if (confirm('Opravdu chceš začít novou hru?')) {
         showScreen(screenSetup);
+        renderArchive();
       }
     });
 
+    $('btn-close-game-over').addEventListener('click', () => {
+      $('game-over').classList.add('hidden');
+      // Show history automatically
+      $('history-container').classList.remove('hidden');
+      $('btn-toggle-history').textContent = 'Historie kol ▲';
+    });
+
     $('btn-new-game-over').addEventListener('click', () => {
+      $('game-over').classList.add('hidden');
       showScreen(screenSetup);
+      renderArchive();
     });
 
     $('btn-toggle-history').addEventListener('click', () => {
@@ -579,6 +593,109 @@
   }
 
   // ============================================
+  // GAME ARCHIVE
+  // ============================================
+  function getArchive() {
+    try {
+      return JSON.parse(localStorage.getItem('kozel-archive') || '[]');
+    } catch {
+      return [];
+    }
+  }
+
+  function saveArchive(archive) {
+    localStorage.setItem('kozel-archive', JSON.stringify(archive));
+  }
+
+  function saveGameToArchive() {
+    const archive = getArchive();
+    const entry = {
+      date: new Date().toISOString(),
+      players: playerNames.slice(),
+      finalScores: scores.slice(),
+      eliminated: eliminated.slice(),
+      rounds: history.length,
+      roundHistory: history.map(h => ({
+        type: h.type,
+        roundScores: h.roundScores.slice()
+      }))
+    };
+    archive.unshift(entry); // newest first
+    // Keep max 50 games
+    if (archive.length > 50) archive.length = 50;
+    saveArchive(archive);
+  }
+
+  function renderArchive() {
+    const container = $('archive-list');
+    const archive = getArchive();
+
+    if (archive.length === 0) {
+      container.innerHTML = '<p style="color:#999;text-align:center;padding:8px">Zatím žádné odehrané hry</p>';
+      return;
+    }
+
+    container.innerHTML = archive.map((game, gi) => {
+      const d = new Date(game.date);
+      const dateStr = d.toLocaleDateString('cs-CZ') + ' ' + d.toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' });
+      const losers = game.eliminated.map(i => game.players[i]);
+
+      return `
+        <div class="archive-game">
+          <div class="archive-header" data-game="${gi}">
+            <div>
+              <span class="archive-date">${dateStr}</span>
+              <span class="archive-rounds">${game.rounds} kol</span>
+            </div>
+            <span class="archive-result">${losers.join(', ')} ☠️</span>
+          </div>
+          <div class="archive-scores">
+            ${game.players.map((p, i) => `<span class="archive-score-item ${game.eliminated.includes(i) ? 'loser' : ''}">${esc(p)}: ${game.finalScores[i]}</span>`).join('')}
+          </div>
+          <div class="archive-detail hidden" id="archive-detail-${gi}">
+            ${(game.roundHistory || []).map((h, ri) => `
+              <div class="archive-round">
+                <span class="archive-round-num">K${ri + 1}${h.type === 'hlasene' ? ' (H)' : ''}</span>
+                ${h.roundScores.map((s, pi) => `<span class="archive-round-score">${game.players[pi]}: ${s > 0 ? '+' + s : s}</span>`).join('')}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // Toggle detail on header click
+    container.querySelectorAll('.archive-header').forEach(hdr => {
+      hdr.addEventListener('click', () => {
+        const detail = $('archive-detail-' + hdr.dataset.game);
+        detail.classList.toggle('hidden');
+      });
+    });
+  }
+
+  function initArchive() {
+    $('btn-show-archive').addEventListener('click', () => {
+      const container = $('archive-container');
+      const btn = $('btn-show-archive');
+      if (container.classList.contains('hidden')) {
+        container.classList.remove('hidden');
+        btn.textContent = 'Historie her ▲';
+        renderArchive();
+      } else {
+        container.classList.add('hidden');
+        btn.textContent = 'Historie her ▼';
+      }
+    });
+
+    $('btn-clear-archive').addEventListener('click', () => {
+      if (confirm('Opravdu smazat celou historii her?')) {
+        saveArchive([]);
+        renderArchive();
+      }
+    });
+  }
+
+  // ============================================
   // UTILITY
   // ============================================
   function esc(str) {
@@ -594,6 +711,7 @@
     initSetup();
     initScoreScreen();
     initRoundScreen();
+    initArchive();
   }
 
   // Start

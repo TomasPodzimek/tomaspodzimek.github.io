@@ -598,6 +598,94 @@ header h1 {
   font-weight: 700;
 }
 
+.game-over-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Game Archive */
+.archive-game {
+  background: var(--white);
+  border: 1px solid var(--gray-light);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+
+.archive-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  cursor: pointer;
+  background: #f9f9f5;
+}
+
+.archive-header:active {
+  background: #f0f0e8;
+}
+
+.archive-date {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.archive-rounds {
+  font-size: 0.8rem;
+  color: #999;
+  margin-left: 8px;
+}
+
+.archive-result {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--red);
+}
+
+.archive-scores {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  padding: 6px 12px 10px;
+  font-size: 0.85rem;
+}
+
+.archive-score-item.loser {
+  color: var(--red);
+  font-weight: 600;
+}
+
+.archive-detail {
+  border-top: 1px solid var(--gray-light);
+  padding: 8px 12px;
+  background: #fafaf5;
+}
+
+.archive-round {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  padding: 3px 0;
+  font-size: 0.8rem;
+  border-bottom: 1px solid #eee;
+}
+
+.archive-round:last-child {
+  border-bottom: none;
+}
+
+.archive-round-num {
+  font-weight: 600;
+  color: var(--green-dark);
+  min-width: 40px;
+}
+
+.archive-round-score {
+  color: #555;
+}
+
 /* Modal */
 .modal {
   position: fixed;
