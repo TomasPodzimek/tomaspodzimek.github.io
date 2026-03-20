@@ -177,6 +177,7 @@
     roundNumber = 0;
     gameOver = false;
     eliminated = [];
+    saveGameState();
     showScoreScreen();
   }
 
@@ -253,8 +254,9 @@
 
     overlay.classList.remove('hidden');
 
-    // Save finished game to archive
+    // Save finished game to archive and clear autosave
     saveGameToArchive();
+    clearGameState();
   }
 
   // --- Score screen events ---
@@ -268,6 +270,7 @@
 
     $('btn-new-game').addEventListener('click', () => {
       if (confirm('Opravdu chceš začít novou hru?')) {
+        clearGameState();
         showScreen(screenSetup);
         renderArchive();
       }
@@ -282,6 +285,7 @@
 
     $('btn-new-game-over').addEventListener('click', () => {
       $('game-over').classList.add('hidden');
+      clearGameState();
       showScreen(screenSetup);
       renderArchive();
     });
@@ -309,6 +313,7 @@
     eliminated = last.eliminatedBefore ? last.eliminatedBefore.slice() : [];
     gameOver = false;
 
+    saveGameState();
     showScoreScreen();
   }
 
@@ -588,6 +593,7 @@
       }
     }
 
+    saveGameState();
     showScoreScreen();
     renderScoreTable(lastRoundScores);
   }
@@ -696,6 +702,48 @@
   }
 
   // ============================================
+  // AUTO-SAVE / RESTORE
+  // ============================================
+  const SAVE_KEY = 'kozel-autosave';
+
+  function saveGameState() {
+    const state = {
+      playerCount,
+      playerNames,
+      scores,
+      history,
+      roundNumber,
+      gameOver,
+      eliminated
+    };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+  }
+
+  function clearGameState() {
+    localStorage.removeItem(SAVE_KEY);
+  }
+
+  function loadGameState() {
+    try {
+      const raw = localStorage.getItem(SAVE_KEY);
+      if (!raw) return false;
+      const state = JSON.parse(raw);
+      if (!state.playerNames || !state.scores) return false;
+
+      playerCount = state.playerCount;
+      playerNames = state.playerNames;
+      scores = state.scores;
+      history = state.history || [];
+      roundNumber = state.roundNumber || 0;
+      gameOver = state.gameOver || false;
+      eliminated = state.eliminated || [];
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  // ============================================
   // UTILITY
   // ============================================
   function esc(str) {
@@ -712,6 +760,11 @@
     initScoreScreen();
     initRoundScreen();
     initArchive();
+
+    // Restore saved game if exists
+    if (loadGameState()) {
+      showScoreScreen();
+    }
   }
 
   // Start
