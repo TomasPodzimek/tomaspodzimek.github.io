@@ -327,28 +327,35 @@
     // Calculate cumulative scores after each round
     const cumulScores = [];
     const running = new Array(playerCount).fill(0);
-    history.forEach((h, i) => {
+    history.forEach((h) => {
       for (let j = 0; j < playerCount; j++) {
         running[j] += h.roundScores[j];
-        // Apply 100 → 90 rule for display
         if (running[j] === 100) running[j] = 90;
       }
       cumulScores.push(running.slice());
     });
 
-    container.innerHTML = history.map((h, i) => `
-      <div class="history-round">
-        <div class="history-round-header">
-          <span>Kolo ${i + 1}</span>
-          <span class="history-round-type">${h.type === 'hlasene' ? 'Hlášené (40)' : 'Běžné (20)'}</span>
-        </div>
-        <div class="history-round-scores">
-          ${h.roundScores.map((s, j) => `
-            <span class="history-score-item">${esc(playerNames[j])}: <span class="history-score-value">${s > 0 ? '+' + s : s}</span> <span class="history-cumul">(${cumulScores[i][j]})</span></span>
-          `).join('')}
-        </div>
+    // Build table
+    const headerCells = playerNames.map(n => `<th>${esc(n)}</th>`).join('');
+    const rows = history.map((h, i) => {
+      const typeLabel = h.type === 'hlasene' ? 'H' : '';
+      const cells = h.roundScores.map((s, j) => {
+        const change = s > 0 ? `+${s}` : `${s}`;
+        const cumul = cumulScores[i][j];
+        const cellClass = cumul >= 100 ? 'ht-elim' : cumul >= 80 ? 'ht-danger' : '';
+        return `<td class="${cellClass}"><span class="ht-change">${change}</span><span class="ht-cumul">${cumul}</span></td>`;
+      }).join('');
+      return `<tr><td class="ht-round">${i + 1}${typeLabel ? `<span class="ht-type">${typeLabel}</span>` : ''}</td>${cells}</tr>`;
+    }).join('');
+
+    container.innerHTML = `
+      <div class="history-table-wrap">
+        <table class="history-table">
+          <thead><tr><th></th>${headerCells}</tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
       </div>
-    `).join('');
+    `;
   }
 
   // ============================================

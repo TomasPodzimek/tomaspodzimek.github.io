@@ -496,48 +496,80 @@ header h1 {
   margin-top: 8px;
 }
 
-.history-round {
-  padding: 10px;
-  border-bottom: 1px solid var(--gray-light);
-  font-size: 0.85rem;
+.history-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-.history-round:last-child {
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.history-table th {
+  padding: 6px 10px;
+  text-align: center;
+  font-weight: 700;
+  color: var(--green-dark);
+  border-bottom: 2px solid var(--gray-light);
+  font-size: 0.8rem;
+}
+
+.history-table td {
+  padding: 5px 10px;
+  text-align: center;
+  border-bottom: 1px solid var(--gray-light);
+  vertical-align: middle;
+}
+
+.history-table tbody tr:last-child td {
   border-bottom: none;
 }
 
-.history-round-header {
+.ht-round {
   font-weight: 700;
   color: var(--green-dark);
-  margin-bottom: 4px;
-  display: flex;
-  justify-content: space-between;
+  text-align: left !important;
+  white-space: nowrap;
 }
 
-.history-round-type {
-  font-weight: 400;
+.ht-type {
+  display: inline-block;
+  background: var(--gold);
+  color: #333;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0 4px;
+  border-radius: 3px;
+  margin-left: 3px;
+  vertical-align: middle;
+}
+
+.ht-change {
+  display: block;
+  font-size: 0.75rem;
   color: var(--gray);
-  font-size: 0.8rem;
 }
 
-.history-round-scores {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 12px;
-}
-
-.history-score-item {
-  color: #555;
-}
-
-.history-score-value {
-  font-weight: 600;
-}
-
-.history-cumul {
-  color: var(--green-dark);
+.ht-cumul {
+  display: block;
   font-weight: 700;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+td.ht-danger .ht-cumul {
+  color: var(--red);
+}
+
+td.ht-elim .ht-cumul {
+  color: var(--white);
+}
+
+td.ht-elim {
+  background: var(--red-bg);
 }
 
 /* Game Over */

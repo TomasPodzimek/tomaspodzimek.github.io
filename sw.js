@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kozel-v3';
+const CACHE_NAME = 'kozel-v4';
 const ASSETS = [
   './',
   './index.html',
